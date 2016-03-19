@@ -5,12 +5,10 @@ import { LOGIN_USER } from '../actions/loginActions';
 import { resetCounterForRoom, incrementCounterForRoom } from '../actions/counterActions';
 
 export default (store) => {
-   var server = new Server(store);
-   console.log('Создали сервер');
+   var server = new Server(store); 
    return (next) => {
-       console.log('первый некст');
       return (action) => {
-          console.log('екшон ' + action.type);
+          console.log('action ' + action.type);
          if (action.type == SEND_MESSAGE) {
             server.send(action.from, action.room, action.msg);
          }

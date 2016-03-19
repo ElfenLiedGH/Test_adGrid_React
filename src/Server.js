@@ -21,16 +21,18 @@ export default class Server
   {
       console.log('Server: msg');
       var msgs = this.log.get('room');
-      if(!msgs) msg = [];
-      msgs.push(msgs);
+      if(!msgs) msgs = [];
+      msgs.push({from, msg});
       this.log.set(room,msgs);
-      this.dispatch(messageReceived(m.from, m.room, m.msg));
+      this.dispatch(messageReceived(from, room, msg));
     // this.server.emit('msg', {from, room, msg});
   }
 
   getLog(room) {
        console.log('Server: getlog');
-       this.dispatch(fullLogReceived(this.log.get('room')))
+       var log = this.log.get('room');
+       if(!log) log = [];
+       this.dispatch(fullLogReceived(log))
     // this.server.emit('getlog', room);
   }
 

@@ -14,12 +14,17 @@
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
     "webpack": "^1.12.2",
-    "webpack-dev-server": "^1.12.1"
+    "webpack-dev-server": "^1.12.1",
+    "css-loader": "0.23.1",
+    "style-loader": "0.13.0"
   },
   "dependencies": {
     "react-redux": "^4.0.0",
     "redux": "^3.0.4",
     "redux-devtools": "^2.0.0",
-    "redux-devtools-diff-monitor": "^3.0.0"
+    "redux-devtools-diff-monitor": "^3.0.0",
+    "ag-grid": "4.0.x",
+    "ag-grid-enterprise": "4.0.x",
+    "ag-grid-react": "4.0.x"
   }
 }

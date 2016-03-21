@@ -1,21 +1,27 @@
 module.exports = {
-  entry: [
-    './src/index'
-  ],
-  module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /node_modules/,
-      loaders: ['babel']
-    }]
-  },
-  output: {
-    path: './dist/',
-    publicPath: '/',
-    filename: 'bundle.js'
-  },
-  devServer: {
-    host: '0.0.0.0',
-    contentBase: './dist/'
-  }
-}
+    entry: "./src/index.js",
+    output: {
+        path: __dirname,
+        filename: "dist/bundle.js"
+    },
+    module: {
+        loaders: [
+            {
+                test: /\.css$/,
+                loader: "style!css"
+            },
+            {
+                test: /\.js$|\.jsx$/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['react', 'es2015']
+                }
+            }
+        ]
+    },
+    resolve: {
+        alias: {
+            "ag-grid-root" : __dirname + "/node_modules/ag-grid"
+        }
+    }
+};

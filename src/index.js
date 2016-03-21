@@ -1,35 +1,18 @@
-import App from './App';
-import React from 'react';
+'use strict';
+
 import ReactDOM from 'react-dom';
-import { createStore, applyMiddleware, compose } from 'redux';
-import { Provider } from 'react-redux';
-import reducer from './reducers/index.js';
-import middleware from './middlewares/serverMiddleware.js';
-// import { devTools, persistState } from 'redux-devtools';
-// import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import DiffMonitor from 'redux-devtools-diff-monitor';
+import React from 'react';
+import MyApp from './MyApp.jsx';
+// is there a better way of doing this?
+import 'ag-grid-root/dist/styles/ag-grid.css';
+import 'ag-grid-root/dist/styles/theme-fresh.css';
 
-var initialState = {
-   userName: null,
-   room: null,
-   rooms: [],
-   messages: [],
-   counters: {}
-};
-
-var createStoreWithMiddlewares = compose(
-   applyMiddleware(middleware)//,
-//    devTools(),
-//    persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
-)(createStore);
-
-var store = createStoreWithMiddlewares(reducer, initialState);
-
-ReactDOM.render(
-   <div>
-      <Provider store={store}>
-         <App />
-      </Provider>
-   
-   </div>,
-   document.getElementById('root'));
+// waiting for dom to load before booting react. we could alternatively
+// put the index.js reference at the end fo the index.html, but i prefer this way.
+document.addEventListener('DOMContentLoaded', ()=> {
+    var container = document.getElementById('myAppContainer');
+    ReactDOM.render(
+        React.createElement(MyApp),
+        container
+    );
+});

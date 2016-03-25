@@ -2,10 +2,10 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import {AgGridReact} from 'ag-grid-react';
 
-import ColDefFactory from './factory/ColDefFactory';
+import ColDefFactory from './factory/TreeColDefFactory';
 import './app.css';
 
-import получитьСписокЛицевых from './middlewares/getLs.js';
+import получитьСписокЛицевых from './middlewares/getAddressTree.js';
 
 // take this line out if you do not want to use ag-Grid-Enterprise
 // import 'ag-grid-enterprise';
@@ -27,17 +27,70 @@ export default class MyApp extends React.Component {
         this.dataSource = {
             //rowCount: ???, - not setting the row count, infinite paging will be used
             pageSize: pageSizeDefault, // changing to number, as scope keeps it as a string
-            getRows: (params) => {
-                console.log('datasource');
-                получитьСписокЛицевых(                
-                (data) => params.successCallback(data.result.записи, data.result.всегоЗаписей),
-                params.startRow, params.endRow)
+            getRows: (params) => {                
+                получитьСписокЛицевых((data) => {
+                    console.log(data.result.записи);
+                    var записи = data.result.записи.filter( элемент=>элемент.счета==-10 )
+                    for(let элемент of записи){
+                        элемент.подкаталоги = data.result.записи; 
+                    }
+                    
+                    params.successCallback(записи, data.result.всегоЗаписей)}
+                ,(err)=>console.log(err.toString()),               
+                0, 100000)
             }
 
         };
 
 
-
+        var icons = {
+             groupExpanded: '<i class="fa fa-minus-square-o"/>',
+             groupContracted: '<i class="fa fa-plus-square-o"/>'
+        }
+        
+        
+       
+        
+        var getNodeChildDetails = function(node) {
+            if (node.$Папка && node.подкаталоги ) {
+                
+               var подкаталоги = node.подкаталоги.filter( (элемент)=>элемент.счета==node.row_id );
+               if(!подкаталоги) return null;
+               
+               
+               for(let элемент of подкаталоги){
+                    элемент.подкаталоги = node.подкаталоги; 
+               }
+               
+            //    return null;
+               return{
+                   group: true,
+                   expanded: false,
+                   children: подкаталоги
+               }
+               
+                
+              /*  return {
+            group: true,
+            // open C be default
+            expanded: false,
+            // provide ag-Grid with the children of this group
+            children: подкаталоги,
+            // this is not used, however it is available to the cellRenderers,
+            // if you provide a custom cellRenderer, you might use it. it's more
+            // relavent if you are doing multi levels of groupings, not just one
+            // as in this example.
+            field: 'group',
+            // the key is used by the default group cellRenderer
+            key: node.$Название
+            
+                };*/
+            } else {
+                return null;
+            }
+        }
+        
+        
 
 
 
@@ -57,7 +110,12 @@ export default class MyApp extends React.Component {
 
             // this is a simple property
             rowBuffer: 10, // no need to set this, the default is fine for almost all scenarios
-            datasource: this.dataSource
+            datasource: this.dataSource,
+            
+            icons: icons,
+            
+            getNodeChildDetails: getNodeChildDetails
+            
 
         };
 
@@ -74,7 +132,14 @@ export default class MyApp extends React.Component {
     }
 
     onGridReady(params) {
+        
+        
         this.api = params.api;
+        
+        var listener = (log)=>(console.log('пришло сообщение ' + log))
+        
+        this.api.addGlobalListener(listener)
+        
         this.columnApi = params.columnApi;
     }
 
@@ -95,28 +160,25 @@ export default class MyApp extends React.Component {
     }
 
     onCellClicked(event) {
-        
         // console.log('onCellClicked: ' + JSON.stringify( event.data ) + ', col ' + event.colIndex);
-        
+
         
 
 
     }
     
-    onCellDoubleClicked(event) {
+    onRowClicked(params) {
+        
+        
+        
+    }
+
+    
+    onRowDoubleClicked(event) {
         // console.log('onCellClicked: ' + JSON.stringify( event.data ) + ', col ' + event.colIndex);
 
 
-if (event.data.$Папка && event.value == event.data.row_id) {
-            var datasource = this.gridOptions.datasource;
-            var перейтивКаталог = (data, params) => params.successCallback(data.result.записи, data.result.всегоЗаписей);
-            datasource.getRows = (params) => получитьСписокЛицевых(
-                (data) => перейтивКаталог(data,params)
-                , params.startRow, params.endRow, event.data.row_id); 
-            this.gridOptions.api.setDatasource(datasource);
-        }
-
-       
+console.log('rowDoubleClicked:')
 
 
 
@@ -189,9 +251,9 @@ if (event.data.$Папка && event.value == event.data.row_id) {
                         onGridReady={this.onGridReady.bind(this) }
                         onRowSelected={this.onRowSelected.bind(this) }
                         onCellClicked={this.onCellClicked.bind(this) }
-                        onCellDoubleClicked={this.onCellDoubleClicked.bind(this) }
                         
-                        // onRowDoubleClicked={this.onRowDoubleClicked.bind(this) }
+                        onRowDoubleClicked={this.onRowDoubleClicked.bind(this) }
+                        onRowClicked={this.onRowClicked.bind(this) }
 
                         // binding to simple properties
                         showToolPanel={this.state.showToolPanel}

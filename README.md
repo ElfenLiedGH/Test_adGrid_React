@@ -1,2 +1,2 @@
 # test_adgrid_react
-<span style="color: red"> ТЕСТ СКРАСНОГО ЦВЕТА. </span><br>
+Some Markdown text with <span style="color:blue">some *blue* text</span>.
